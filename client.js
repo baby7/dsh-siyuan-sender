@@ -45,7 +45,7 @@ window.__ModuleLoader__.load({
       'action.retryShort': '重试',
       'toast.ok': '已发送到思源「{notebook}」',
       'toast.error': '发送失败',
-      'settings.title': '思源发送',
+      'settings.title': '思源笔记直送',
       'settings.description': '把对话里生成的 Markdown 文档发送到自建的思源笔记（SiYuan）。',
       'settings.endpoint': '思源地址',
       'settings.endpointHint': '填到端口即可，例如 http://nas.example.com:6806；不要在末尾加 /api。',

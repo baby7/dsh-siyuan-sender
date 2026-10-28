@@ -244,7 +244,7 @@ function decode(result) {
 async function resolveNotebook(settings, token) {
   const wanted = settings.notebook
   if (wanted === '') {
-    return { ok: false, code: 'not-configured', message: '还没有设置目标笔记本：请在思源发送设置里选择「DSH收件箱」所在的笔记本。' }
+    return { ok: false, code: 'not-configured', message: '还没有设置目标笔记本：请在思源笔记直送设置里选择「DSH收件箱」所在的笔记本。' }
   }
   const listed = decode(await siyuanPost(settings, token, '/api/notebook/lsNotebooks', {}))
   if (!listed.ok) return listed
@@ -390,7 +390,7 @@ function markdownRefusal(path) {
 async function sendDocument(ctx, base, input, signal) {
   const { settings } = await loadState(ctx, base)
   if (settings.endpoint === '') {
-    return { ok: false, code: 'not-configured', message: '还没有设置思源地址：打开「设置 → 思源发送」填写 NAS 地址并保存。' }
+    return { ok: false, code: 'not-configured', message: '还没有设置思源地址：打开「设置 → 思源笔记直送」填写 NAS 地址并保存。' }
   }
   const token = await resolveToken(ctx, settings)
   if (token === null) {

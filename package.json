@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "把 DSH 对话中生成的 Markdown 文档一键发送到思源笔记（SiYuan）：交付文件卡片上的「发送到思源」按钮、侧边栏文档工具栏按钮，以及一个同名 Agent 工具。",
+  "description": "思源笔记直送：把 DSH 对话中生成的 Markdown 文档直接送进自建的思源笔记（SiYuan）。交付文件卡片上的「思源」按钮、侧边栏文档工具栏按钮，以及一个同能力的 Agent 工具。",
   "exports": {
     ".": "./index.js",
     "./client": "./client.js",
