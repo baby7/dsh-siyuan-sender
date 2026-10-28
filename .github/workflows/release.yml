@@ -1,0 +1,184 @@
+name: Release
+
+# Push a tag like `v1.0.0`, or run this by hand, to publish a GitHub Release
+# carrying the plugin as an installable tarball. Users then install that tarball
+# by URL, so nobody needs a clone, a Node toolchain, or a build step.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to publish, e.g. v1.0.0. Leave empty to use the package.json version.'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Pinned to the major that DSH profiles install plugins with, so a local
+      # `pnpm pack` and this run produce the same artifact.
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '11'
+
+      # Cheap checks first: a bad tag or a broken manifest should fail before
+      # the test suite spends time.
+      - name: Resolve version and tag
+        id: version
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          node -e '
+            const fs = require("node:fs");
+            const version = JSON.parse(fs.readFileSync("package.json", "utf8")).version;
+            const wanted = (process.env.INPUT_TAG || process.env.GITHUB_REF_NAME || "").trim();
+            const tag = wanted === "" || wanted === "master" || wanted === "main" ? `v${version}` : wanted;
+            if (tag !== `v${version}`) {
+              throw new Error(`tag ${tag} does not match package.json version ${version}; bump the version or fix the tag`);
+            }
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\ntag=${tag}\n`);
+            console.log(`releasing ${tag}`);
+          '
+
+      # The two halves the manifest advertises must exist, or the tarball is
+      # broken for every consumer.
+      - name: Verify package contract
+        run: |
+          node -e '
+            const fs = require("node:fs");
+            const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+            const required = ["index.js", "client.js", "cordis.patch.yml", "locale/zh.json", "locale/en.json", "icon.svg"];
+            for (const file of required) {
+              if (!fs.existsSync(file)) throw new Error(`missing declared file: ${file}`);
+            }
+            for (const [name, target] of Object.entries(pkg.exports ?? {})) {
+              const path = String(target).replace(/^\.\//, "");
+              if (path.includes("*")) continue;
+              if (!fs.existsSync(path)) throw new Error(`exports["${name}"] points at ${path}, which does not exist`);
+            }
+            if (pkg.dsh?.bundle?.patch === undefined) throw new Error("package.json must declare dsh.bundle.patch");
+            if (pkg.dsh?.client === undefined) throw new Error("package.json must declare dsh.client");
+            console.log(`package contract OK for ${pkg.name}@${pkg.version}`);
+          '
+
+      # The test drives the real plugin module against a mock SiYuan kernel and
+      # imports only Node builtins, so it needs no install step.
+      - name: Run host-half tests
+        run: node test/host.test.mjs
+
+      # pnpm pack honours "files", so the artifact holds exactly what the
+      # manifest ships — no .git, no tests, no local scratch directories.
+      # The check reads the finished tarball, because that is what a consumer
+      # receives: a "files" entry that silently dropped something fails here.
+      - name: Pack tarball
+        id: pack
+        run: |
+          mkdir -p dist
+          pnpm pack --pack-destination dist
+          # pnpm names the file after the package scope ("local-dsh-..."), while
+          # the package is published under a private @local scope. Rename to the
+          # repository's own name so the asset URL is predictable and survives a
+          # later rename of the package. pnpm reads the name from package.json
+          # inside the archive, not from the file name.
+          built="$(basename dist/*.tgz)"
+          tarball="dsh-siyuan-sender-${VERSION}.tgz"
+          mv "dist/$built" "dist/$tarball"
+          echo "tarball=$tarball" >> "$GITHUB_OUTPUT"
+          TARBALL="$tarball" node -e '
+            const fs = require("node:fs");
+            const { execFileSync } = require("node:child_process");
+            const tarball = process.env.TARBALL;
+            const listing = execFileSync("tar", ["-tzf", `dist/${tarball}`], { encoding: "utf8" })
+              .split("\n").map((line) => line.trim()).filter(Boolean);
+            for (const required of ["package/index.js", "package/client.js", "package/cordis.patch.yml", "package/package.json"]) {
+              if (!listing.includes(required)) {
+                throw new Error(`tarball is missing ${required}; it holds: ${listing.join(", ")}`);
+              }
+            }
+            console.log(`${tarball}: ${listing.length} entries, contents OK`);
+            console.log(listing.join("\n"));
+          '
+          cd dist
+          sha256sum "$tarball" > "$tarball.sha256"
+          cat "$tarball.sha256"
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+
+      - name: Write release notes
+        env:
+          TARBALL: ${{ steps.pack.outputs.tarball }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          node -e '
+            const fs = require("node:fs");
+            const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+            const tarball = process.env.TARBALL;
+            const tag = process.env.TAG;
+            const repo = process.env.GITHUB_SERVER_URL + "/" + process.env.GITHUB_REPOSITORY;
+            const asset = (name) => `${repo}/releases/download/${tag}/${name}`;
+            const notes = [
+              `思源笔记直送 ${pkg.version} —— 把 DSH 对话里生成的 Markdown 直接送进自建思源笔记。`,
+              "",
+              "## 安装",
+              "",
+              "下载本页附件后，指向它安装：",
+              "",
+              "```bash",
+              `dsh plugin --profile desktop add ./${tarball}`,
+              "```",
+              "",
+              "也可以直接给 URL，让 pnpm 自己下载：",
+              "",
+              "```bash",
+              `dsh plugin --profile desktop add ${asset(tarball)}`,
+              "```",
+              "",
+              "或跟踪仓库主分支：",
+              "",
+              "```bash",
+              `dsh plugin --profile desktop add github:${process.env.GITHUB_REPOSITORY}`,
+              "```",
+              "",
+              "装完重启 DSH（Web 端刷新页面），到「设置 → 思源笔记直送」填地址、API token 和目标笔记本。",
+              "",
+              "## 完整性校验",
+              "",
+              "```bash",
+              `sha256sum -c ${tarball}.sha256`,
+              "```",
+              "",
+              "## 附件",
+              "",
+              `- \`${tarball}\` —— 插件本体，pnpm/npm 均可安装`,
+              `- \`${tarball}.sha256\` —— 校验和`,
+              "",
+              `配置、功能与排错见 [README](${repo}#readme)。`,
+            ].join("\n");
+            fs.writeFileSync("release-notes.md", notes);
+          '
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          TARBALL: ${{ steps.pack.outputs.tarball }}
+        run: |
+          gh release create "$TAG" \
+            "dist/$TARBALL" \
+            "dist/$TARBALL.sha256" \
+            --title "思源笔记直送 $TAG" \
+            --notes-file release-notes.md \
+            --target "$GITHUB_SHA"

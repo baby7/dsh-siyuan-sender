@@ -21,14 +21,25 @@
 
 ## 安装
 
-Deepseek Harness 桌面端安装
+推荐方式：到 [Releases](https://github.com/baby7/dsh-siyuan-sender/releases) 下载最新的 `.tgz`，再指向文件安装：
+
+```bash
+dsh plugin --profile desktop add ./dsh-siyuan-sender-1.0.0.tgz
 ```
-dsh plugin --profile desktop add baby7/dsh-siyuan-sender
+
+也可以让 pnpm 直接下载 Release 附件：
+
+```bash
+dsh plugin --profile desktop add https://github.com/baby7/dsh-siyuan-sender/releases/download/v1.0.0/dsh-siyuan-sender-1.0.0.tgz
 ```
-Deepseek Harness Web端安装
+
+或跟踪仓库主分支（不锁版本，随上游变化）：
+
+```bash
+dsh plugin --profile desktop add github:baby7/dsh-siyuan-sender
 ```
-dsh plugin --profile desktop add baby7/dsh-siyuan-sender
-```
+
+> `desktop` 是 DSH 桌面端的 profile 名；Web 端装的也是同一个 profile 目录，换成你实际使用的名字即可（`dsh plugin --profile <名字> add ...`）。
 
 装好后刷新页面即可。
 
@@ -90,6 +101,24 @@ dsh plugin --profile desktop add baby7/dsh-siyuan-sender
 | 超时 | 调大配置里的 `timeoutMs`（最高 120000） |
 
 ---
+
+## 发版（维护者）
+
+仓库带了一条 GitHub Actions 流水线 `.github/workflows/release.yml`：推送 `v*` 标签即自动跑测试、校验包结构、打出 `.tgz` 并创建 Release。
+
+```bash
+# 1. 确认 package.json 的 version 与要打的标签一致，提交改动
+git add -A && git commit -m "chore: release v1.0.0"
+git push origin master
+
+# 2. 打标签并推送，流水线随即启动
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+也可以在 Actions 页手动触发该工作流（`workflow_dispatch`），并在输入框里指定标签。
+
+流水线会先拒绝三类错误：标签与 `package.json` 版本不一致、`exports` 指向不存在的文件、打出的 tgz 里缺 `index.js` / `client.js` / `cordis.patch.yml`。发下一版时，把 `package.json` 的 `version` 改成新值再推对应的标签。
 
 ## 许可
 
