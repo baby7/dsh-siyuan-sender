@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "SiYuan Sender",
+    "description": "Send Markdown documents from the conversation to a self-hosted SiYuan instance: a “Send to SiYuan” button on delivered-file cards, a document-preview toolbar button, and a siyuan_send tool for the model."
+  }
+}

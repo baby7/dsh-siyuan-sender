@@ -1,0 +1,22 @@
+# dsh-siyuan-sender bundle patch: inserts one dual-face plugin row.
+#
+# The Host half (exports ".") runs in the host process and owns the
+# /siyuan-sender/* routes and the `siyuan_send` agent tool. The browser half
+# (exports "./client", declared by dsh.client) adds the per-file button in the
+# conversation's delivered-file card, the document-preview toolbar button and
+# the settings section.
+#
+# Connection settings live in this row's `config` (endpoint, token
+# reference, notebook, parent path). The token itself is never stored here:
+# `tokenRef` names a DSH credential reference, so the value stays in the
+# deployment's credential store.
+- insert:
+    - id: dsh-siyuan-sender
+      name: '@local/dsh-siyuan-sender'
+      config:
+        endpoint: ''
+        tokenRef: SIYUAN_API_TOKEN
+        notebook: ''
+        parentPath: '/'
+        allowSelfSigned: false
+        timeoutMs: 15000

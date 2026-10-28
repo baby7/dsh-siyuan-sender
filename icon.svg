@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="SiYuan Sender">
+  <rect x="2" y="10" width="60" height="44" rx="9" fill="#3a5fcd" opacity="0.12"/>
+  <path d="M9 20.5c0-2.5 2-4.5 4.5-4.5h21c2.5 0 4.5 2 4.5 4.5v15c0 2.5-2 4.5-4.5 4.5H19l-7.2 6.2c-.9.8-2.3.1-2.3-1.1V20.5Z" fill="#3a5fcd"/>
+  <path d="M14 22.5h17M14 28.5h13M14 34.5h9" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M57 26.5 33.5 35.5l9 3.4 3.4 9L57 26.5Z" fill="#f0f4ff" stroke="#25347a" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="m39.6 39.6 8-7.6" stroke="#25347a" stroke-width="2.2" stroke-linecap="round"/>
+</svg>

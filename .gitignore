@@ -1,0 +1,78 @@
+# 依赖与安装产物
+node_modules/
+.pnpm-store/
+*.tgz
+package-lock.json
+npm-shrinkwrap.json
+yarn.lock
+
+# 构建与缓存
+dist/
+build/
+.cache/
+.temp/
+.tmp/
+*.tsbuildinfo
+coverage/
+.nyc_output/
+
+# 日志
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+
+# 本地配置与凭据 —— 绝不提交
+.env
+.env.*
+!.env.example
+.credentials.yaml
+.credentials.json
+.dsh-siyuan-sender.json
+config.local.json
+settings.local.json
+secrets/
+*.pem
+*.key
+*.p12
+*.pfx
+
+# 编辑器与 IDE
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.example.json
+*.swp
+*.swo
+*~
+.project
+.settings/
+.classpath
+*.sublime-project
+*.sublime-workspace
+
+# 操作系统
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# 测试与临时输出
+test-results/
+playwright-report/
+*.snap.actual
+*.orig
+*.rej
+scratch/
+.scratch/
+
+# 打包产物
+*.zip
+*.7z
+*.rar

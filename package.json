@@ -1,0 +1,44 @@
+{
+  "name": "@local/dsh-siyuan-sender",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "把 DSH 对话中生成的 Markdown 文档一键发送到思源笔记（SiYuan）：交付文件卡片上的「发送到思源」按钮、侧边栏文档工具栏按钮，以及一个同名 Agent 工具。",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "设计说明.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node test/host.test.mjs"
+  },
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-deliverables",
+        "@deepseek-ai/dsh-client-ui-sidebar-documentpreview",
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "react": "^18.2.0"
+  }
+}
