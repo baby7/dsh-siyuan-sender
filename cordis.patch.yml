@@ -12,7 +12,7 @@
 # deployment's credential store.
 - insert:
     - id: dsh-siyuan-sender
-      name: '@local/dsh-siyuan-sender'
+      name: 'dsh-siyuan-sender'
       config:
         endpoint: ''
         tokenRef: SIYUAN_API_TOKEN

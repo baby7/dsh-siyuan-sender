@@ -1,5 +1,5 @@
 /**
- * @local/dsh-siyuan-sender — Host half.
+ * dsh-siyuan-sender — Host half.
  *
  * Sends Markdown documents produced in a conversation to a self-hosted SiYuan
  * (思源笔记) instance and returns the created document's coordinates.
@@ -22,7 +22,7 @@
  * and re-resolved on every request, so a rotated token takes effect without a
  * restart. Nothing in this file logs a token.
  *
- * @module @local/dsh-siyuan-sender
+ * @module dsh-siyuan-sender
  */
 
 import { readFile, writeFile, mkdir } from 'node:fs/promises'

@@ -24,13 +24,13 @@
 推荐方式：到 [Releases](https://github.com/baby7/dsh-siyuan-sender/releases) 下载最新的 `.tgz`，再指向文件安装：
 
 ```bash
-dsh plugin --profile desktop add ./dsh-siyuan-sender-1.0.0.tgz
+dsh plugin --profile desktop add ./dsh-siyuan-sender-1.0.1.tgz
 ```
 
 也可以让 pnpm 直接下载 Release 附件：
 
 ```bash
-dsh plugin --profile desktop add https://github.com/baby7/dsh-siyuan-sender/releases/download/v1.0.0/dsh-siyuan-sender-1.0.0.tgz
+dsh plugin --profile desktop add https://github.com/baby7/dsh-siyuan-sender/releases/download/v1.0.1/dsh-siyuan-sender-1.0.1.tgz
 ```
 
 或跟踪仓库主分支（不锁版本，随上游变化）：
@@ -108,12 +108,12 @@ dsh plugin --profile desktop add github:baby7/dsh-siyuan-sender
 
 ```bash
 # 1. 确认 package.json 的 version 与要打的标签一致，提交改动
-git add -A && git commit -m "chore: release v1.0.0"
+git add -A && git commit -m "chore: release v1.0.1"
 git push origin master
 
 # 2. 打标签并推送，流水线随即启动
-git tag v1.0.0
-git push origin v1.0.0
+git tag v1.0.1
+git push origin v1.0.1
 ```
 
 也可以在 Actions 页手动触发该工作流（`workflow_dispatch`），并在输入框里指定标签。

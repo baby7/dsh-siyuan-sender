@@ -60,7 +60,7 @@ jobs:
           node -e '
             const fs = require("node:fs");
             const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
-            const required = ["index.js", "client.js", "cordis.patch.yml", "locale/zh.json", "locale/en.json", "icon.svg"];
+            const required = ["index.js", "client.js", "cordis.patch.yml", "locale/zh.json", "locale/en.json"];
             for (const file of required) {
               if (!fs.existsSync(file)) throw new Error(`missing declared file: ${file}`);
             }
@@ -88,11 +88,10 @@ jobs:
         run: |
           mkdir -p dist
           pnpm pack --pack-destination dist
-          # pnpm names the file after the package scope ("local-dsh-..."), while
-          # the package is published under a private @local scope. Rename to the
-          # repository's own name so the asset URL is predictable and survives a
-          # later rename of the package. pnpm reads the name from package.json
-          # inside the archive, not from the file name.
+          # pnpm names the file after the package name, while the asset URL is
+          # kept predictable by renaming to the repository's own name so it
+          # survives a later rename of the package. pnpm reads the name from
+          # package.json inside the archive, not from the file name.
           built="$(basename dist/*.tgz)"
           tarball="dsh-siyuan-sender-${VERSION}.tgz"
           mv "dist/$built" "dist/$tarball"

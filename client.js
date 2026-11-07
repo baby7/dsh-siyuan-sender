@@ -1,5 +1,5 @@
 /**
- * @local/dsh-siyuan-sender — Client half.
+ * dsh-siyuan-sender — Client half.
  *
  * Three seats, one operation:
  *
@@ -19,7 +19,7 @@
  * bundle has no dependencies and no build step.
  */
 window.__ModuleLoader__.load({
-  id: '@local/dsh-siyuan-sender',
+  id: 'dsh-siyuan-sender',
   factory(require) {
     'use strict'
 
@@ -175,10 +175,10 @@ window.__ModuleLoader__.load({
     /** Install the stylesheet once per page; unmounting the owner removes it. */
     function Styles() {
       React.useEffect(() => {
-        const tagId = '@local/dsh-siyuan-sender/siyuan-sender.css'
+        const tagId = 'dsh-siyuan-sender/siyuan-sender.css'
         if (document.querySelector(`style[data-plugin-css=${JSON.stringify(tagId)}]`) !== null) return undefined
         const tag = document.createElement('style')
-        tag.dataset.plugin = '@local/dsh-siyuan-sender'
+        tag.dataset.plugin = 'dsh-siyuan-sender'
         tag.dataset.pluginCss = tagId
         tag.textContent = CSS
         document.head.appendChild(tag)

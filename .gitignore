@@ -76,3 +76,6 @@ scratch/
 *.zip
 *.7z
 *.rar
+
+# 插件市场投稿材料（条目文件属于 awesome-dsh-plugin 仓库，不提交到本仓库）
+dsh-market-submission/
