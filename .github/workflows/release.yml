@@ -88,13 +88,18 @@ jobs:
         run: |
           mkdir -p dist
           pnpm pack --pack-destination dist
-          # pnpm names the file after the package name, while the asset URL is
-          # kept predictable by renaming to the repository's own name so it
-          # survives a later rename of the package. pnpm reads the name from
-          # package.json inside the archive, not from the file name.
+          # pnpm names the archive <package-name>-<version>.tgz and strips any
+          # scope ("@local/x" becomes "local-x"). Rename only when that differs
+          # from the asset name we publish under, so the URL stays predictable
+          # across a package rename. When the package is already unscoped and
+          # matches the repository name, pnpm's own name is the target name —
+          # an unconditional `mv` then moves a file onto itself and fails with
+          # "are the same file", taking the whole release down.
           built="$(basename dist/*.tgz)"
           tarball="dsh-siyuan-sender-${VERSION}.tgz"
-          mv "dist/$built" "dist/$tarball"
+          if [ "$built" != "$tarball" ]; then
+            mv "dist/$built" "dist/$tarball"
+          fi
           echo "tarball=$tarball" >> "$GITHUB_OUTPUT"
           TARBALL="$tarball" node -e '
             const fs = require("node:fs");
