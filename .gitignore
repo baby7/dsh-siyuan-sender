@@ -79,3 +79,6 @@ scratch/
 
 # 插件市场投稿材料（条目文件属于 awesome-dsh-plugin 仓库，不提交到本仓库）
 dsh-market-submission/
+
+# 本地文档不提交Git
+local-md/

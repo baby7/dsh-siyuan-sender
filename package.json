@@ -1,11 +1,23 @@
 {
   "name": "dsh-siyuan-sender",
   "version": "1.0.1",
-  "private": true,
+  "private": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/baby7/dsh-siyuan-sender.git"
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "dsh",
+    "deepseek-harness",
+    "siyuan",
+    "siyuan-note",
+    "markdown"
+  ],
   "type": "module",
   "description": "思源笔记直送：把 DSH 对话中生成的 Markdown 文档直接送进自建的思源笔记（SiYuan）。交付文件卡片上的「思源」按钮、侧边栏文档工具栏按钮，以及一个同能力的 Agent 工具。",
   "exports": {
@@ -20,7 +32,6 @@
     "locale/*.json",
     "screenshots.json",
     "README.md",
-    "设计说明.md",
     "LICENSE"
   ],
   "scripts": {
